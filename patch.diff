@@ -1,0 +1,46 @@
+diff -rupN includes/api_uusers.php includes2/api_uusers.php
+--- includes/api_uusers.php	2017-09-02 12:34:45.000000000 +0700
++++ includes2/api_uusers.php	2017-09-02 12:04:45.666574481 +0700
+@@ -23,7 +23,7 @@
+ function apiGetUUser($db, $user) {
+ 	$data = Array();
+ 
+-	$query = 'SELECT users.username AS username, email, users.expiration AS expiration, name, session, "admin" as role , ip, pods.id AS pod, pods.expiration AS pexpiration FROM users LEFT JOIN pods ON users.username = pods.username WHERE users.username = :username;';
++	$query = 'SELECT users.username AS username, email, users.expiration AS expiration, name, session, role , ip, pods.id AS pod, pods.expiration AS pexpiration FROM users LEFT JOIN pods ON users.username = pods.username WHERE users.username = :username;';
+ 
+ 	try {
+ 		$statement = $db -> prepare($query);
+@@ -67,7 +67,7 @@ function apiGetUUser($db, $user) {
+ function apiGetUUsers($db) {
+ 	$data = Array();
+ 
+-	$query = 'SELECT users.username AS username, email, users.expiration AS expiration, folder, name, session, "admin" as role, ip, pods.id AS pod, pods.expiration AS pexpiration, pods.lab_id AS lab FROM users LEFT JOIN pods ON users.username = pods.username ORDER BY users.username ASC;';
++	$query = 'SELECT users.username AS username, email, users.expiration AS expiration, folder, name, session, role, ip, pods.id AS pod, pods.expiration AS pexpiration, pods.lab_id AS lab FROM users LEFT JOIN pods ON users.username = pods.username ORDER BY users.username ASC;';
+ 	try {
+ 		$statement = $db -> prepare($query);
+ 		$statement -> execute();
+diff -rupN includes/functions.php includes2/functions.php
+--- includes/functions.php	2017-09-02 12:33:18.000000000 +0700
++++ includes2/functions.php	2017-08-29 16:06:27.000000000 +0700
+@@ -462,8 +462,8 @@ function getUserByCookie($db, $cookie) {
+ 				'lab' => $result['lab'],
+ 				'lang' => 'en',	// TODO: must deal with multiple lang
+ 				'name' => $result['name'],
+-				// 'role' => $result['role'],
+-                'role' => "admin",
++				'role' => $result['role'],
++                //'role' => "admin",
+ 				'tenant' => $result['pod'],
+ 				'html5' => $result['html5'],
+ 				'username' => $result['username']
+@@ -594,8 +594,8 @@ function listClouds() {
+ function listRoles() {
+ 	$results = Array();
+ 	$results['admin'] = 'Administrator';
+-	// $results['editor'] = 'Editor';
+-	// $results['user'] = 'User';
++	$results['editor'] = 'Editor';
++	$results['user'] = 'User';
+ 	return $results;
+ }
+ 
